@@ -15,7 +15,8 @@
     "@anthropic-ai/sdk": "^0.39.0",
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
-    "active-win": "^8.1.0"
+    "active-win": "^8.1.0",
+    "uiohook-napi": "^1.5.2"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

@@ -27,10 +27,12 @@ export type MainToRendererChannel =
   | 'haetae:ai-error'   // AI 오류
 
 export type RendererToMainChannel =
-  | 'haetae:yes'        // 사용자 [예] 클릭
-  | 'haetae:no'         // 사용자 [아니오] 클릭
-  | 'haetae:drag-start' // 드래그 시작
-  | 'haetae:drag'       // 드래그 중 (x, y)
-  | 'haetae:drag-end'   // 드래그 종료
+  | 'haetae:yes'            // 사용자 [예] 클릭
+  | 'haetae:no'             // 사용자 [아니오] 클릭
+  | 'haetae:set-interactive' // 말풍선 표시/숨김 시 마우스 이벤트 토글
+  | 'haetae:move-window'    // 드래그로 창 이동 ({ x, y })
+  | 'haetae:drag-start'     // (예비) 드래그 시작
+  | 'haetae:drag'           // (예비) 드래그 중
+  | 'haetae:drag-end'       // (예비) 드래그 종료
 
 export type AppState = 'idle' | 'alert' | 'loading' | 'response' | 'cooldown'
