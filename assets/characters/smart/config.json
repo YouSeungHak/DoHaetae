@@ -1,0 +1,15 @@
+{
+  "id": "smart",
+  "name": "똑똑한 해태",
+  "idleAsset": "characters/smart/idle.webp",
+  "reactionAsset": "characters/smart/reaction.webp",
+  "triggerMessage": "3분간 입력이 없었습니다. 도움이 필요하신가요?",
+  "yesLabel": "도움 요청",
+  "noLabel": "괜찮습니다",
+  "bubbleStyle": {
+    "backgroundColor": "#F4F4F4",
+    "borderColor": "#888888",
+    "borderRadius": "8px",
+    "fontFamily": "monospace"
+  }
+}

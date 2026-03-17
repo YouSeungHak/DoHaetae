@@ -1,0 +1,12 @@
+node_modules/
+out/
+dist/
+.env
+*.log
+
+# macOS
+.DS_Store
+
+# HQ 기획 문서 (999_ClaudeAgent에서 관리)
+docs/
+reports/

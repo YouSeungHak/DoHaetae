@@ -1,0 +1,15 @@
+{
+  "id": "playful",
+  "name": "장난꾸러기 해태",
+  "idleAsset": "characters/playful/idle.webp",
+  "reactionAsset": "characters/playful/reaction.webp",
+  "triggerMessage": "막혔어?! 같이 해결해보자구! 🐾",
+  "yesLabel": "도와줘!",
+  "noLabel": "괜찮아!",
+  "bubbleStyle": {
+    "backgroundColor": "#FFF8E8",
+    "borderColor": "#FFD060",
+    "borderRadius": "20px",
+    "fontFamily": "sans-serif"
+  }
+}

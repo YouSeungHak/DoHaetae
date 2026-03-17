@@ -1,0 +1,15 @@
+{
+  "id": "calm",
+  "name": "차분한 해태",
+  "idleAsset": "characters/calm/idle.webp",
+  "reactionAsset": "characters/calm/reaction.webp",
+  "triggerMessage": "...도와줄까?",
+  "yesLabel": "응",
+  "noLabel": "아니",
+  "bubbleStyle": {
+    "backgroundColor": "#F0F4FF",
+    "borderColor": "#A0B4E8",
+    "borderRadius": "16px",
+    "fontFamily": "sans-serif"
+  }
+}
