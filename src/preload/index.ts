@@ -1,12 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import { MainToRendererChannel, RendererToMainChannel, CharacterConfig } from '@shared/types'
+import { MainToRendererChannel, RendererToMainChannel } from '@shared/types'
 
 // Renderer에서 사용할 안전한 API만 노출
 contextBridge.exposeInMainWorld('haetae', {
   // Main → Renderer 이벤트 수신
   on: (channel: MainToRendererChannel, callback: (...args: unknown[]) => void) => {
-    ipcRenderer.on(channel, (_event, ...args) => callback(...args))
-    return () => ipcRenderer.removeAllListeners(channel)
+    const listener = (_event: Electron.IpcRendererEvent, ...args: unknown[]): void => callback(...args)
+    ipcRenderer.on(channel, listener)
+    return () => ipcRenderer.removeListener(channel, listener)
   },
 
   // Renderer → Main 이벤트 전송

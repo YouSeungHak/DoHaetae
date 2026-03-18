@@ -11,9 +11,8 @@
   position: relative;
 }
 
-/* 캐릭터 래퍼 - 드래그 핸들 */
+/* 캐릭터 래퍼 */
 .character-wrapper {
-  cursor: grab;
   width: 128px;
   height: 128px;
   display: flex;
@@ -22,8 +21,18 @@
   flex-shrink: 0;
 }
 
-.character-wrapper:active {
+/* 드래그 커서: 말풍선이 없을 때만 grab 표시 */
+.app-container {
+  cursor: grab;
+}
+
+.app-container:active {
   cursor: grabbing;
+}
+
+/* 말풍선 위에서는 포인터 커서 */
+.speech-bubble {
+  cursor: default;
 }
 
 /* 말풍선 컨테이너 */
@@ -42,7 +51,24 @@
   animation: bubble-in 0.2s ease-out;
 }
 
-/* 말풍선 꼬리 — CSS 변수로 캐릭터별 색상 동적 적용 */
+/* 말풍선 꼬리 border — ::before (바깥쪽, 테두리 색) */
+.speech-bubble::before {
+  content: '';
+  position: absolute;
+  bottom: -13px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top-width: 13px;
+  border-top-style: solid;
+  border-top-color: var(--tail-border-color, #A0B4E8);
+  z-index: 0;
+}
+
+/* 말풍선 꼬리 fill — ::after (안쪽, 배경 색) */
 .speech-bubble::after {
   content: '';
   position: absolute;
@@ -56,6 +82,7 @@
   border-top-width: 10px;
   border-top-style: solid;
   border-top-color: var(--tail-color, #F0F4FF);
+  z-index: 1;
 }
 
 /* 말풍선 등장 애니메이션 */
@@ -70,10 +97,49 @@
   }
 }
 
+/* 말풍선 퇴장 애니메이션 */
+.speech-bubble.bubble-exit {
+  animation: bubble-out 0.2s ease-in forwards;
+  pointer-events: none;
+}
+
+@keyframes bubble-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(6px) scale(0.96);
+  }
+}
+
 /* 말풍선 메시지 텍스트 */
 .bubble-message {
   margin-bottom: 10px;
   word-break: keep-all;
+}
+
+/* AI 응답 — 긴 텍스트 스크롤 */
+.bubble-response-text {
+  max-height: 120px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) transparent;
+  padding-right: 2px;
+}
+
+.bubble-response-text::-webkit-scrollbar {
+  width: 4px;
+}
+
+.bubble-response-text::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.bubble-response-text::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 2px;
 }
 
 /* 로딩 점 */
@@ -116,18 +182,28 @@
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: filter 0.12s, background 0.12s, opacity 0.1s, transform 0.1s;
 }
 
-.btn:active { opacity: 0.7; }
+.btn:hover  { filter: brightness(1.08); }
+.btn:active { opacity: 0.75; transform: scale(0.96); }
 
 .btn-yes {
   color: white;
 }
 
+.btn-yes:hover {
+  filter: brightness(1.12);
+}
+
 .btn-no {
   background: #e0e0e0;
   color: #444;
+}
+
+.btn-no:hover {
+  background: #d0d0d0;
+  filter: none;
 }
 
 .btn-close {
@@ -140,7 +216,11 @@
   background: #e0e0e0;
   color: #666;
   cursor: pointer;
+  transition: background 0.12s, transform 0.1s, opacity 0.1s;
 }
+
+.btn-close:hover  { background: #d0d0d0; }
+.btn-close:active { opacity: 0.75; transform: scale(0.97); }
 
 /* ===== Day 2: SVG 캐릭터 시스템 ===== */
 

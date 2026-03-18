@@ -5,6 +5,7 @@ interface Props {
   appState: AppState
   character: CharacterConfig
   aiText: string
+  exiting: boolean
   onYes: () => void
   onNo: () => void
   onClose: () => void
@@ -14,6 +15,7 @@ export default function SpeechBubble({
   appState,
   character,
   aiText,
+  exiting,
   onYes,
   onNo,
   onClose,
@@ -34,7 +36,10 @@ export default function SpeechBubble({
   } as React.CSSProperties
 
   return (
-    <div className="speech-bubble" style={{ ...bubbleCss, ...tailStyle }}>
+    <div
+      className={`speech-bubble${exiting ? ' bubble-exit' : ''}`}
+      style={{ ...bubbleCss, ...tailStyle }}
+    >
       {/* alert 상태: "도와줄까?" + 버튼 */}
       {appState === 'alert' && (
         <>
@@ -69,9 +74,9 @@ export default function SpeechBubble({
       )}
 
       {/* response 상태: AI 응답 */}
-      {appState === 'response' && (
+      {(appState === 'response' || exiting) && aiText && (
         <>
-          <div className="bubble-message">{aiText}</div>
+          <div className="bubble-message bubble-response-text">{aiText}</div>
           <button className="btn-close" onClick={onClose}>
             닫기
           </button>

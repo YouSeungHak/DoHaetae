@@ -11,5 +11,6 @@
     "borderColor": "#888888",
     "borderRadius": "8px",
     "fontFamily": "monospace"
-  }
+  },
+  "aiTone": "논리적이고 간결한 말투로 답변하세요. 문제의 핵심을 짚고 실용적인 해결 방향을 제시하세요. 감정적 표현은 최소화하세요."
 }

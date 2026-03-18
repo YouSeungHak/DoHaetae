@@ -1,5 +1,16 @@
-import { app, BrowserWindow, ipcMain, screen } from 'electron'
+import { app, BrowserWindow, ipcMain, screen, Tray, Menu, nativeImage } from 'electron'
 import { join } from 'path'
+import { readFileSync } from 'fs'
+
+// .env 파일 수동 로드 (dotenv 없이) — ANTHROPIC_API_KEY 등
+try {
+  const envContent = readFileSync(join(process.cwd(), '.env'), 'utf-8')
+  for (const line of envContent.split('\n')) {
+    const match = line.match(/^([^#\s][^=]*)=(.*)$/)
+    if (match) process.env[match[1].trim()] ??= match[2].trim()
+  }
+} catch { /* .env 없으면 무시 */ }
+
 import { is } from '@electron-toolkit/utils'
 import { WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_MARGIN } from '@shared/constants'
 import { CharacterConfig, RendererToMainChannel } from '@shared/types'
@@ -10,6 +21,7 @@ import { AppWatcher } from './AppWatcher'
 import { TriggerEngine } from './TriggerEngine'
 
 let mainWindow:    BrowserWindow   | null = null
+let tray:          Tray            | null = null
 let selectedChar:  CharacterConfig | null = null
 let inputWatcher:  InputWatcher    | null = null
 let appWatcher:    AppWatcher      | null = null
@@ -55,13 +67,51 @@ function createWindow(): void {
   })
 }
 
+// 16×16 흰색 발바닥 모양 트레이 아이콘 (base64 PNG, macOS Template 대응)
+const TRAY_ICON_B64 =
+  'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAL' +
+  'EwAACxMBAJqcGAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABVSURBVDiNY2Ag' +
+  'GvxHJf6PQpwCAABjGAAGAAB//wEAAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' +
+  'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABK8gX5AAAAAElFTkSuQmCC'
+
+// ── 트레이 아이콘 ────────────────────────────────────────────────
+
+function createTray(): void {
+  // assets/tray-icon.png 있으면 사용, 없으면 내장 아이콘 사용
+  const trayIconPath = join(__dirname, '../../assets/tray-icon.png')
+  let icon = nativeImage.createFromPath(trayIconPath)
+  if (icon.isEmpty()) {
+    icon = nativeImage.createFromDataURL(`data:image/png;base64,${TRAY_ICON_B64}`)
+  }
+
+  tray = new Tray(icon)
+  tray.setToolTip(`도해태 — ${selectedChar?.name ?? '해태'}`)
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: `오늘의 해태: ${selectedChar?.name ?? '해태'}`,
+      enabled: false,
+    },
+    { type: 'separator' },
+    {
+      label: '도해태 보이기',
+      click: () => mainWindow?.show(),
+    },
+    {
+      label: '종료',
+      click: () => app.quit(),
+    },
+  ])
+  tray.setContextMenu(contextMenu)
+}
+
 // ── 감지 시스템 초기화 ────────────────────────────────────────────
 
 function startWatchers(): void {
   if (!mainWindow) return
 
-  appWatcher   = new AppWatcher()
-  inputWatcher = new InputWatcher(() => triggerEngine?.checkAndTrigger())
+  appWatcher    = new AppWatcher()
+  inputWatcher  = new InputWatcher(() => triggerEngine?.checkAndTrigger())
   triggerEngine = new TriggerEngine(mainWindow, appWatcher, inputWatcher)
 
   appWatcher.start()
@@ -79,20 +129,28 @@ function stopWatchers(): void {
 
 app.whenReady().then(() => {
   selectedChar = loadCharacterConfig()
-  console.log(`[Haetae] 오늘의 해태: ${selectedChar.name}`)
+  console.log(`[Haetae] 오늘의 해태: ${selectedChar.name} (${selectedChar.id})`)
 
   createWindow()
-  setupIpcHandlers(mainWindow!, triggerEngine!)
+  createTray()
+  setupIpcHandlers(mainWindow!, () => triggerEngine, () => selectedChar)
   startWatchers()
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
 })
 
 app.on('window-all-closed', () => {
   stopWatchers()
+  tray?.destroy()
   if (process.platform !== 'darwin') app.quit()
+})
+
+// macOS: Dock 아이콘 클릭 시 창 복구 (창이 없으면 새로 생성)
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow()
+  } else {
+    mainWindow?.show()
+  }
 })
 
 // ── IPC: 창 제어 ──────────────────────────────────────────────────

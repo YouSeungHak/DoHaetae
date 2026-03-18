@@ -11,5 +11,6 @@
     "borderColor": "#FFD060",
     "borderRadius": "20px",
     "fontFamily": "sans-serif"
-  }
+  },
+  "aiTone": "활기차고 유쾌한 말투로 답변하세요. 긍정적인 에너지로 격려하되, 구체적인 힌트를 주세요. 짧게 핵심만 말하세요."
 }

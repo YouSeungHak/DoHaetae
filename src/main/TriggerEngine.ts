@@ -70,4 +70,9 @@ export class TriggerEngine {
   isInCooldown(): boolean {
     return Date.now() < this.cooldownUntil
   }
+
+  /** AI 프롬프트에 포함할 현재 활성 앱 이름 */
+  getActiveAppName(): string {
+    return this.appWatcher.getCurrentAppName()
+  }
 }

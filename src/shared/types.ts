@@ -16,6 +16,8 @@ export interface CharacterConfig {
   yesLabel: string
   noLabel: string
   bubbleStyle: BubbleStyle
+  /** ClaudeService 시스템 프롬프트에 포함할 캐릭터 톤 지시사항 */
+  aiTone: string
 }
 
 // IPC 채널 이름 타입

@@ -3,13 +3,14 @@
   "name": "차분한 해태",
   "idleAsset": "characters/calm/idle.webp",
   "reactionAsset": "characters/calm/reaction.webp",
-  "triggerMessage": "...도와줄까?",
-  "yesLabel": "응",
-  "noLabel": "아니",
+  "triggerMessage": "잠깐 쉬어가도 괜찮아. 같이 풀어볼까?",
+  "yesLabel": "도와줘",
+  "noLabel": "괜찮아",
   "bubbleStyle": {
     "backgroundColor": "#F0F4FF",
     "borderColor": "#A0B4E8",
     "borderRadius": "16px",
     "fontFamily": "sans-serif"
-  }
+  },
+  "aiTone": "차분하고 따뜻한 말투로 답변하세요. 급하지 않게, 천천히 생각해보자는 느낌으로 조언하세요."
 }
