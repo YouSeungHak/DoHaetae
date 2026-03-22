@@ -1,13 +1,13 @@
 import { ipcMain, clipboard, BrowserWindow } from 'electron'
 import { CharacterConfig } from '@shared/types'
 import { TriggerEngine } from './TriggerEngine'
-import { ClaudeService } from './ClaudeService'
+import { OpenAIService } from './OpenAIService'
 
-let claudeService: ClaudeService | null = null
+let openAIService: OpenAIService | null = null
 
-function getClaudeService(): ClaudeService {
-  if (!claudeService) claudeService = new ClaudeService()
-  return claudeService
+function getOpenAIService(): OpenAIService {
+  if (!openAIService) openAIService = new OpenAIService()
+  return openAIService
 }
 
 export function setupIpcHandlers(
@@ -28,11 +28,11 @@ export function setupIpcHandlers(
     console.log(`[ipc] haetae:yes — 캐릭터: ${character?.name}, 앱: "${activeApp}", 클립보드: ${clipboardText.length}자`)
 
     try {
-      const text = await getClaudeService().ask({ activeApp, clipboardText, aiTone })
+      const text = await getOpenAIService().ask({ activeApp, clipboardText, aiTone })
       win.webContents.send('haetae:ai-result', { text })
       engine?.resolve()
     } catch (err) {
-      console.error('[ipc] Claude API 오류:', err)
+      console.error('[ipc] OpenAI API 오류:', err)
       win.webContents.send('haetae:ai-error')
       engine?.dismiss()
     }
